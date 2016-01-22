@@ -1,0 +1,273 @@
+#!/usr/bin/env python2
+
+import SocketServer
+import threading
+import Queue
+import traceback
+import time
+import signal
+import random
+
+from neopixel import *
+
+# LED strip configuration:
+LED_COUNT      = 150     # Number of LED pixels.
+LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
+LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
+LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
+LED_BRIGHTNESS = 100     # Set to 0 for darkest and 255 for brightest
+LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+
+# Constants
+HOST = "0.0.0.0"
+PORT = 9999
+INIT_SHOW_DELAY = 1
+INIT_SHOW_BRIGHTNESS = 50
+EXIT_SHOW_BRIGHTNESS = 3 
+CHASER_LENGTH = 10
+MAX_DELAY = 2000
+MAX_BRIGHTNESS = 255
+MAX_COLOR = 0xFFFFFF
+
+# Communication queue between the CommandHandler and CommandProcessor threads
+controlQueue = Queue.Queue()
+
+# Flag to signal the threads to keep running or stop
+keepRunning = True
+
+def sigTermHandler(signum, frame):
+	global keepRunning
+	keepRunning = False
+
+signal.signal(signal.SIGTERM, sigTermHandler)
+
+# Create NeoPixel object with appropriate configuration.
+ledStrip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
+
+# Intialize the library (must be called once before other functions).
+ledStrip.begin()
+
+random.seed()
+
+class Colors(object):
+	BLACK = Color(0, 0, 0);
+	RED   = Color(255, 0, 0);
+	GREEN = Color(0, 255, 0);
+	BLUE  = Color(0, 0, 255);
+	WHITE = Color(255, 255, 255);
+
+Position = { "COMMAND" : 0, "RGB" : 1, "BRIGHTNESS" : 2, "DELAY" : 3 } 
+
+Command = { "SHUTDOWN" : -1, "OFF" : 0, "COLOR" : 1, "RANDOM" : 2, "CHASER" : 3 }
+
+class ControlSocketHandler(SocketServer.BaseRequestHandler):
+
+	def handle(self):
+		# self.request is the TCP socket connected to the client
+		self.data = self.request.recv(1024).strip()
+		
+		print "Handling request received: " + self.data
+		
+		if len(self.data) > 25:
+			print "Command too long"
+			return
+			
+		received = self.data.split(',')
+		print "Received from {} {} ({})".format(self.client_address[0], received, len(received))
+		if len(received) != 4:
+			print "Invalid command"
+			return
+
+		try:
+			controlTuple = []
+			controlTuple.append(int(received[0]))
+			controlTuple.append(int(received[1], 16))
+			controlTuple.append(int(received[2]))
+			controlTuple.append(int(received[3]))
+			
+			if controlTuple[Position["COMMAND"]] not in Command.values():
+				print "Unknown command"
+			if controlTuple[Position["RGB"]] > MAX_COLOR:
+				print "Color out of range"
+			if controlTuple[Position["BRIGHTNESS"]] > MAX_BRIGHTNESS:
+				print "Brightness out of range"
+			if controlTuple[Position["DELAY"]] > MAX_DELAY:	
+				print "Delay out of range"
+				return
+		except ValueError:
+			print "Invalid value in command"
+			return
+		except:
+			print "Unknown error"
+			return
+			
+		print "Control tuple {}".format(controlTuple)
+		controlQueue.put(controlTuple)
+
+class ControlCommandListener(threading.Thread):
+	def __init__(self, host, port):
+		threading.Thread.__init__(self)
+		self.server = SocketServer.TCPServer((host, port), ControlSocketHandler)
+		
+	def run(self):
+		print "Starting ControlCommandListener"
+		self.server.serve_forever()
+
+	def stop(self):
+		print "Stopping ControlCommandListener"
+		self.server.shutdown()
+
+command = Command["OFF"]
+color = Color(0,0,0)
+brightness = 0
+delay = 10
+
+class ControlCommandProcessor(threading.Thread):
+	def __init__(self):
+		threading.Thread.__init__(self)
+		
+	def run(self):
+		global keepRunning
+		global command
+		global color
+		global brightness
+		global delay
+
+		print "Starting ControlCommandProcessor"
+		while keepRunning:
+			try:
+				controlTuple = controlQueue.get(timeout=3)
+				
+				print "Processing command received: {}".format(controlTuple)
+				
+				if controlTuple[0] == Command["SHUTDOWN"]:
+					print "Shutting down"
+					keepRunning = False
+				else:
+					if controlTuple[Position["COMMAND"]] == Command["OFF"]:
+						print "OFF"
+						brightness = 0
+						print "Off"
+						command = Command["OFF"]
+
+					elif controlTuple[Position["COMMAND"]] == Command["COLOR"]:
+						color = controlTuple[Position["RGB"]]
+						brightness = controlTuple[Position["BRIGHTNESS"]]
+						delay = controlTuple[Position["DELAY"]]
+						print "RGB Color 0x%02x brightness %d delay %d" % (color, brightness, delay)
+						command = Command["COLOR"]
+
+					elif controlTuple[Position["COMMAND"]] == Command["RANDOM"]:
+						brightness = controlTuple[Position["BRIGHTNESS"]]
+						delay = controlTuple[Position["DELAY"]]
+						print "Random, brightness %d delay %d" % (brightness, delay)
+						command = Command["RANDOM"]
+
+					elif controlTuple[Position["COMMAND"]] == Command["CHASER"]:
+						color = controlTuple[Position["RGB"]]
+						brightness = controlTuple[Position["BRIGHTNESS"]]
+						delay = controlTuple[Position["DELAY"]]
+						print "Chaser Color 0x%02x brightness %d delay %d" % (color, brightness, delay)
+						command = Command["CHASER"]
+						
+
+			except Queue.Empty:
+				pass
+			except:
+				print "Exception handling command"
+				raise
+				keepRunning = False
+
+	def stop(self):
+		print "Stopping ControlCommandProcessor"
+
+def showColor(color, brightness, wait_ms=25):
+	ledStrip.setBrightness(brightness)
+	for i in range(ledStrip.numPixels()):
+		ledStrip.setPixelColor(i, color)
+		if wait_ms > 0:
+			ledStrip.show()
+			time.sleep(wait_ms/1000.0)
+	
+	ledStrip.show()
+
+def showRandomColors(brightness):
+	ledStrip.setBrightness(brightness)
+	for i in range(ledStrip.numPixels()):
+		color = random.randrange(0, 0xFFFFFF)
+		ledStrip.setPixelColor(i, color)
+	
+	ledStrip.show()
+
+def showChaser(color, brightness, wait_ms=25):
+	ledStrip.setBrightness(brightness)
+
+	for i in range(ledStrip.numPixels() + CHASER_LENGTH):
+		if i < CHASER_LENGTH:		
+			ledStrip.setPixelColor(i, color)
+
+		elif i >= CHASER_LENGTH and i <= ledStrip.numPixels():
+			ledStrip.setPixelColor(i - CHASER_LENGTH, 0)
+			ledStrip.setPixelColor(i, color)
+	
+		elif i > ledStrip.numPixels():
+			ledStrip.setPixelColor(i - CHASER_LENGTH, 0)
+
+		if wait_ms > 0:
+			ledStrip.show()
+			time.sleep(wait_ms/1000.0)
+
+def initShow():
+	showColor(Colors.RED, INIT_SHOW_BRIGHTNESS, 0)
+	time.sleep(INIT_SHOW_DELAY)
+	showColor(Colors.GREEN, INIT_SHOW_BRIGHTNESS, 0)
+	time.sleep(INIT_SHOW_DELAY)
+	showColor(Colors.BLUE, INIT_SHOW_BRIGHTNESS, 0)
+	time.sleep(INIT_SHOW_DELAY)
+	showColor(Colors.WHITE, INIT_SHOW_BRIGHTNESS, 0)
+	time.sleep(INIT_SHOW_DELAY)
+	showColor(Colors.BLACK, 0, 0)
+
+def exitShow():
+	showColor(Colors.RED, EXIT_SHOW_BRIGHTNESS, 0)
+
+if __name__ == "__main__":
+	
+	commandProcessor = None
+
+	try:
+		control = ControlCommandListener(HOST, PORT)
+		control.start()
+
+		initShow()	
+		
+		commandProcessor = ControlCommandProcessor()
+
+		commandProcessor.start()
+
+		while keepRunning:
+			oldCommand = command
+
+			if command == Command["OFF"] or command == Command["COLOR"]:
+				showColor(color, brightness, delay)
+				time.sleep(1)
+			elif command == Command["RANDOM"]:
+				showRandomColors(brightness)
+				time.sleep(delay/1000.0)	
+			elif command == Command["CHASER"]:
+				showChaser(color, brightness, delay)
+				time.sleep(delay/1000.0)
+
+			if oldCommand != command:
+				showColor(Colors.BLACK, 0, 0)
+
+    	except KeyboardInterrupt:
+		keepRunning = False
+
+	control.stop()
+
+	if commandProcessor is not None:
+		commandProcessor.stop()
+		commandProcessor.join()
+	
+	exitShow()
