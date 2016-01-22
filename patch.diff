@@ -1,0 +1,3698 @@
+From f988f99b6b3316b64d7d21c14b478d8bd0bf09ee Mon Sep 17 00:00:00 2001
+From: Jose Maria Rodriguez Saez <fox2002@gmail.com>
+Date: Fri, 22 Jan 2016 19:10:10 +0000
+Subject: [PATCH] Initial release. Al function working so far. Following the
+ app will be simplified.
+
+---
+ .gitignore                                         |   8 +
+ .idea/.name                                        |   1 +
+ .idea/compiler.xml                                 |  22 +++
+ .idea/copyright/profiles_settings.xml              |   3 +
+ .idea/encodings.xml                                |   6 +
+ .idea/gradle.xml                                   |  19 ++
+ .idea/misc.xml                                     |  46 +++++
+ .idea/modules.xml                                  |   9 +
+ .idea/runConfigurations.xml                        |  12 ++
+ .idea/vcs.xml                                      |   6 +
+ app/.gitignore                                     |   1 +
+ app/build.gradle                                   |  30 +++
+ app/proguard-rules.pro                             |  17 ++
+ .../es/jmrs/pablossmartlight/ApplicationTest.java  |  13 ++
+ app/src/main/AndroidManifest.xml                   |  27 +++
+ .../java/es/jmrs/pablossmartlight/LEDConfig.java   |  52 ++++++
+ .../es/jmrs/pablossmartlight/MainActivity.java     | 203 ++++++++++++++++++++
+ .../java/es/jmrs/pablossmartlight/PSLControl.java  | 208 +++++++++++++++++++++
+ .../es/jmrs/pablossmartlight/SensorsFragment.java  | 113 +++++++++++
+ .../jmrs/pablossmartlight/SensorsInformation.java  |  61 ++++++
+ app/src/main/java/layout/ColorsFragment.java       | 177 ++++++++++++++++++
+ app/src/main/res/layout/activity_main.xml          |  47 +++++
+ app/src/main/res/layout/fragment_colors.xml        | 153 +++++++++++++++
+ .../main/res/layout/fragment_debug_and_test.xml    |  56 ++++++
+ app/src/main/res/layout/fragment_main.xml          |  56 ++++++
+ app/src/main/res/layout/fragment_sensors.xml       |  77 ++++++++
+ app/src/main/res/menu/menu_main.xml                |  10 +
+ app/src/main/res/mipmap-hdpi/ic_launcher.png       | Bin 0 -> 3418 bytes
+ app/src/main/res/mipmap-mdpi/ic_launcher.png       | Bin 0 -> 2206 bytes
+ app/src/main/res/mipmap-xhdpi/ic_launcher.png      | Bin 0 -> 4842 bytes
+ app/src/main/res/mipmap-xxhdpi/ic_launcher.png     | Bin 0 -> 7718 bytes
+ app/src/main/res/mipmap-xxxhdpi/ic_launcher.png    | Bin 0 -> 10486 bytes
+ app/src/main/res/values-v21/styles.xml             |   9 +
+ app/src/main/res/values-w820dp/dimens.xml          |   6 +
+ app/src/main/res/values/colors.xml                 |   6 +
+ app/src/main/res/values/dimens.xml                 |   7 +
+ app/src/main/res/values/strings.xml                |   8 +
+ app/src/main/res/values/styles.xml                 |  20 ++
+ .../es/jmrs/pablossmartlight/ExampleUnitTest.java  |  15 ++
+ build.gradle                                       |  23 +++
+ gradle.properties                                  |  18 ++
+ gradle/wrapper/gradle-wrapper.jar                  | Bin 0 -> 53637 bytes
+ gradle/wrapper/gradle-wrapper.properties           |   6 +
+ gradlew                                            | 160 ++++++++++++++++
+ gradlew.bat                                        |  90 +++++++++
+ settings.gradle                                    |   1 +
+ 46 files changed, 1802 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 .idea/.name
+ create mode 100644 .idea/compiler.xml
+ create mode 100644 .idea/copyright/profiles_settings.xml
+ create mode 100644 .idea/encodings.xml
+ create mode 100644 .idea/gradle.xml
+ create mode 100644 .idea/misc.xml
+ create mode 100644 .idea/modules.xml
+ create mode 100644 .idea/runConfigurations.xml
+ create mode 100644 .idea/vcs.xml
+ create mode 100644 app/.gitignore
+ create mode 100644 app/build.gradle
+ create mode 100644 app/proguard-rules.pro
+ create mode 100644 app/src/androidTest/java/es/jmrs/pablossmartlight/ApplicationTest.java
+ create mode 100644 app/src/main/AndroidManifest.xml
+ create mode 100644 app/src/main/java/es/jmrs/pablossmartlight/LEDConfig.java
+ create mode 100644 app/src/main/java/es/jmrs/pablossmartlight/MainActivity.java
+ create mode 100644 app/src/main/java/es/jmrs/pablossmartlight/PSLControl.java
+ create mode 100644 app/src/main/java/es/jmrs/pablossmartlight/SensorsFragment.java
+ create mode 100644 app/src/main/java/es/jmrs/pablossmartlight/SensorsInformation.java
+ create mode 100644 app/src/main/java/layout/ColorsFragment.java
+ create mode 100644 app/src/main/res/layout/activity_main.xml
+ create mode 100644 app/src/main/res/layout/fragment_colors.xml
+ create mode 100644 app/src/main/res/layout/fragment_debug_and_test.xml
+ create mode 100644 app/src/main/res/layout/fragment_main.xml
+ create mode 100644 app/src/main/res/layout/fragment_sensors.xml
+ create mode 100644 app/src/main/res/menu/menu_main.xml
+ create mode 100644 app/src/main/res/mipmap-hdpi/ic_launcher.png
+ create mode 100644 app/src/main/res/mipmap-mdpi/ic_launcher.png
+ create mode 100644 app/src/main/res/mipmap-xhdpi/ic_launcher.png
+ create mode 100644 app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+ create mode 100644 app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+ create mode 100644 app/src/main/res/values-v21/styles.xml
+ create mode 100644 app/src/main/res/values-w820dp/dimens.xml
+ create mode 100644 app/src/main/res/values/colors.xml
+ create mode 100644 app/src/main/res/values/dimens.xml
+ create mode 100644 app/src/main/res/values/strings.xml
+ create mode 100644 app/src/main/res/values/styles.xml
+ create mode 100644 app/src/test/java/es/jmrs/pablossmartlight/ExampleUnitTest.java
+ create mode 100644 build.gradle
+ create mode 100644 gradle.properties
+ create mode 100644 gradle/wrapper/gradle-wrapper.jar
+ create mode 100644 gradle/wrapper/gradle-wrapper.properties
+ create mode 100644 gradlew
+ create mode 100644 gradlew.bat
+ create mode 100644 settings.gradle
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..c6cbe56
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,8 @@
++*.iml
++.gradle
++/local.properties
++/.idea/workspace.xml
++/.idea/libraries
++.DS_Store
++/build
++/captures
+diff --git a/.idea/.name b/.idea/.name
+new file mode 100644
+index 0000000..543563b
+--- /dev/null
++++ b/.idea/.name
+@@ -0,0 +1 @@
++PablosSmartLight
+\ No newline at end of file
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+new file mode 100644
+index 0000000..9a8b7e5
+--- /dev/null
++++ b/.idea/compiler.xml
+@@ -0,0 +1,22 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <option name="DEFAULT_COMPILER" value="Javac" />
++    <resourceExtensions />
++    <wildcardResourcePatterns>
++      <entry name="!?*.java" />
++      <entry name="!?*.form" />
++      <entry name="!?*.class" />
++      <entry name="!?*.groovy" />
++      <entry name="!?*.scala" />
++      <entry name="!?*.flex" />
++      <entry name="!?*.kt" />
++      <entry name="!?*.clj" />
++    </wildcardResourcePatterns>
++    <annotationProcessing>
++      <profile default="true" name="Default" enabled="false">
++        <processorPath useClasspath="true" />
++      </profile>
++    </annotationProcessing>
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/.idea/copyright/profiles_settings.xml b/.idea/copyright/profiles_settings.xml
+new file mode 100644
+index 0000000..e7bedf3
+--- /dev/null
++++ b/.idea/copyright/profiles_settings.xml
+@@ -0,0 +1,3 @@
++<component name="CopyrightManager">
++  <settings default="" />
++</component>
+\ No newline at end of file
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+new file mode 100644
+index 0000000..97626ba
+--- /dev/null
++++ b/.idea/encodings.xml
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding">
++    <file url="PROJECT" charset="UTF-8" />
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+new file mode 100644
+index 0000000..d390b65
+--- /dev/null
++++ b/.idea/gradle.xml
+@@ -0,0 +1,19 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="GradleSettings">
++    <option name="linkedExternalProjectsSettings">
++      <GradleProjectSettings>
++        <option name="distributionType" value="LOCAL" />
++        <option name="externalProjectPath" value="$PROJECT_DIR$" />
++        <option name="gradleHome" value="C:\Program Files\Android\Android Studio\gradle\gradle-2.8" />
++        <option name="gradleJvm" value="1.7" />
++        <option name="modules">
++          <set>
++            <option value="$PROJECT_DIR$" />
++            <option value="$PROJECT_DIR$/app" />
++          </set>
++        </option>
++      </GradleProjectSettings>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+new file mode 100644
+index 0000000..6a1e020
+--- /dev/null
++++ b/.idea/misc.xml
+@@ -0,0 +1,46 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="EntryPointsManager">
++    <entry_points version="2.0" />
++  </component>
++  <component name="NullableNotNullManager">
++    <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
++    <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />
++    <option name="myNullables">
++      <value>
++        <list size="4">
++          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
++          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
++          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
++          <item index="3" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
++        </list>
++      </value>
++    </option>
++    <option name="myNotNulls">
++      <value>
++        <list size="4">
++          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
++          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
++          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
++          <item index="3" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
++        </list>
++      </value>
++    </option>
++  </component>
++  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
++    <OptionsSetting value="true" id="Add" />
++    <OptionsSetting value="true" id="Remove" />
++    <OptionsSetting value="true" id="Checkout" />
++    <OptionsSetting value="true" id="Update" />
++    <OptionsSetting value="true" id="Status" />
++    <OptionsSetting value="true" id="Edit" />
++    <ConfirmationsSetting value="0" id="Add" />
++    <ConfirmationsSetting value="0" id="Remove" />
++  </component>
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
++    <output url="file://$PROJECT_DIR$/build/classes" />
++  </component>
++  <component name="ProjectType">
++    <option name="id" value="Android" />
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+new file mode 100644
+index 0000000..0bcff4d
+--- /dev/null
++++ b/.idea/modules.xml
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/PablosSmartLight.iml" filepath="$PROJECT_DIR$/PablosSmartLight.iml" />
++      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+new file mode 100644
+index 0000000..7f68460
+--- /dev/null
++++ b/.idea/runConfigurations.xml
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="RunConfigurationProducerService">
++    <option name="ignoredProducers">
++      <set>
++        <option value="org.jetbrains.plugins.gradle.execution.test.runner.AllInPackageGradleConfigurationProducer" />
++        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer" />
++        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer" />
++      </set>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+index 0000000..6564d52
+--- /dev/null
++++ b/.idea/vcs.xml
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="" />
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/app/.gitignore b/app/.gitignore
+new file mode 100644
+index 0000000..796b96d
+--- /dev/null
++++ b/app/.gitignore
+@@ -0,0 +1 @@
++/build
+diff --git a/app/build.gradle b/app/build.gradle
+new file mode 100644
+index 0000000..2553647
+--- /dev/null
++++ b/app/build.gradle
+@@ -0,0 +1,30 @@
++apply plugin: 'com.android.application'
++
++android {
++    compileSdkVersion 22
++    buildToolsVersion '23.0.2'
++
++    defaultConfig {
++        applicationId "es.jmrs.pablossmartlight"
++        minSdkVersion 22
++        targetSdkVersion 22
++        versionCode 1
++        versionName "1.0"
++    }
++    buildTypes {
++        release {
++            minifyEnabled false
++            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
++        }
++    }
++}
++
++dependencies {
++    compile fileTree(dir: 'libs', include: ['*.jar'])
++    testCompile 'junit:junit:4.12'
++    compile 'com.android.support:appcompat-v7:22.2.1'
++    compile 'com.android.support:design:22.2.1'
++    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
++    compile 'com.larswerkman:HoloColorPicker:1.5'
++    compile 'com.android.support:support-v4:22.2.1'
++}
+diff --git a/app/proguard-rules.pro b/app/proguard-rules.pro
+new file mode 100644
+index 0000000..bed187e
+--- /dev/null
++++ b/app/proguard-rules.pro
+@@ -0,0 +1,17 @@
++# Add project specific ProGuard rules here.
++# By default, the flags in this file are appended to flags specified
++# in C:\Users\jmrodriguez\AppData\Local\Android\sdk/tools/proguard/proguard-android.txt
++# You can edit the include path and order by changing the proguardFiles
++# directive in build.gradle.
++#
++# For more details, see
++#   http://developer.android.com/guide/developing/tools/proguard.html
++
++# Add any project specific keep options here:
++
++# If your project uses WebView with JS, uncomment the following
++# and specify the fully qualified class name to the JavaScript interface
++# class:
++#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
++#   public *;
++#}
+diff --git a/app/src/androidTest/java/es/jmrs/pablossmartlight/ApplicationTest.java b/app/src/androidTest/java/es/jmrs/pablossmartlight/ApplicationTest.java
+new file mode 100644
+index 0000000..6180630
+--- /dev/null
++++ b/app/src/androidTest/java/es/jmrs/pablossmartlight/ApplicationTest.java
+@@ -0,0 +1,13 @@
++package es.jmrs.pablossmartlight;
++
++import android.app.Application;
++import android.test.ApplicationTestCase;
++
++/**
++ * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
++ */
++public class ApplicationTest extends ApplicationTestCase<Application> {
++    public ApplicationTest() {
++        super(Application.class);
++    }
++}
+\ No newline at end of file
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+new file mode 100644
+index 0000000..62c42b6
+--- /dev/null
++++ b/app/src/main/AndroidManifest.xml
+@@ -0,0 +1,27 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="es.jmrs.pablossmartlight">
++
++    <uses-permission android:name="android.permission.INTERNET"/>
++
++    <application
++        android:allowBackup="true"
++        android:icon="@mipmap/ic_launcher"
++        android:label="@string/app_name"
++        android:supportsRtl="true"
++        android:theme="@style/AppTheme">
++
++        <activity
++            android:name=".MainActivity"
++            android:label="@string/app_name"
++            android:theme="@style/AppTheme.NoActionBar">
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++
++                <category android:name="android.intent.category.LAUNCHER" />
++            </intent-filter>
++        </activity>
++
++    </application>
++
++</manifest>
+diff --git a/app/src/main/java/es/jmrs/pablossmartlight/LEDConfig.java b/app/src/main/java/es/jmrs/pablossmartlight/LEDConfig.java
+new file mode 100644
+index 0000000..66c89ae
+--- /dev/null
++++ b/app/src/main/java/es/jmrs/pablossmartlight/LEDConfig.java
+@@ -0,0 +1,52 @@
++package es.jmrs.pablossmartlight;
++
++/**
++ * Created by jmrodriguez on 19/12/2015.
++ */
++public class LEDConfig {
++
++        private String m_command;
++        private int m_RGB;
++        private int m_brightness;
++        private int m_delay;
++
++        public LEDConfig(String command, int red, int green, int blue, int brightness, int delay)
++        {
++            m_command = command;
++            m_RGB = (red << 16) | (green << 8) | blue;
++            m_brightness = brightness;
++            m_delay = delay;
++        }
++
++        public LEDConfig(String command, int RGB, int brightness, int delay)
++        {
++            m_command = command;
++            m_RGB = RGB & 0x00FFFFFF;
++            m_brightness = brightness;
++            m_delay = delay;
++        }
++
++        String getCommmand() { return m_command; }
++        String getRGB() { return String.format("0x%06X", m_RGB); }
++        int getRedComponent() { return (m_RGB >> 16) & 0xFF; }
++        int getGreenComponent()
++        {
++            return (m_RGB >> 8) & 0xFF;
++        }
++        int getBlueComponent()
++        {
++            return (m_RGB) & 0xFF;
++        }
++        int getBrightness() {
++            return m_brightness;
++        }
++        int getDelay() {
++            return m_delay;
++        }
++
++    public String toString()
++    {
++        return "Command " + getCommmand() + " RGB [" + getRedComponent() + ", " + getGreenComponent() + ", " +
++                getBlueComponent() + "] Brightness " + getBrightness() + " Delay " + getDelay();
++    }
++}
+diff --git a/app/src/main/java/es/jmrs/pablossmartlight/MainActivity.java b/app/src/main/java/es/jmrs/pablossmartlight/MainActivity.java
+new file mode 100644
+index 0000000..bf94e0d
+--- /dev/null
++++ b/app/src/main/java/es/jmrs/pablossmartlight/MainActivity.java
+@@ -0,0 +1,203 @@
++package es.jmrs.pablossmartlight;
++
++import android.support.v7.app.AppCompatActivity;
++import android.support.v7.widget.Toolbar;
++
++import android.support.v4.app.Fragment;
++import android.support.v4.app.FragmentManager;
++import android.support.v4.app.FragmentPagerAdapter;
++import android.support.v4.view.ViewPager;
++import android.os.Bundle;
++import android.util.Log;
++import android.view.LayoutInflater;
++import android.view.Menu;
++import android.view.MenuItem;
++import android.view.View;
++import android.view.ViewGroup;
++
++import android.widget.Button;
++import android.widget.TextView;
++
++import com.larswerkman.holocolorpicker.ColorPicker;
++import com.larswerkman.holocolorpicker.SaturationBar;
++import com.larswerkman.holocolorpicker.ValueBar;
++
++import layout.ColorsFragment;
++
++public class MainActivity extends AppCompatActivity {
++    private TextView text;
++    /**
++     * The {@link android.support.v4.view.PagerAdapter} that will provide
++     * fragments for each of the sections. We use a
++     * {@link FragmentPagerAdapter} derivative, which will keep every
++     * loaded fragment in memory. If this becomes too memory intensive, it
++     * may be best to switch to a
++     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
++     */
++    private SectionsPagerAdapter mSectionsPagerAdapter;
++
++    /**
++     * The {@link ViewPager} that will host the section contents.
++     */
++    private ViewPager mViewPager;
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.activity_main);
++
++        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
++        setSupportActionBar(toolbar);
++        // Create the adapter that will return a fragment for each of the three
++        // primary sections of the activity.
++        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
++
++        // Set up the ViewPager with the sections adapter.
++        mViewPager = (ViewPager) findViewById(R.id.container);
++        mViewPager.setAdapter(mSectionsPagerAdapter);
++    }
++
++    @Override
++    public boolean onCreateOptionsMenu(Menu menu) {
++        // Inflate the menu; this adds items to the action bar if it is present.
++        getMenuInflater().inflate(R.menu.menu_main, menu);
++        return true;
++    }
++
++    @Override
++    public boolean onOptionsItemSelected(MenuItem item) {
++        // Handle action bar item clicks here. The action bar will
++        // automatically handle clicks on the Home/Up button, so long
++        // as you specify a parent activity in AndroidManifest.xml.
++        int id = item.getItemId();
++
++        //noinspection SimplifiableIfStatement
++        if (id == R.id.action_settings) {
++            return true;
++        }
++
++        return super.onOptionsItemSelected(item);
++    }
++
++    /**
++     * A placeholder fragment containing a simple view.
++     */
++    public static class PlaceholderFragment extends Fragment implements ColorPicker.OnColorChangedListener {
++
++        /**
++         * The fragment argument representing the section number for this
++         * fragment.
++         */
++        private static final String ARG_SECTION_NUMBER = "section_number";
++
++        private View m_rootView = null;
++        private ColorPicker m_colorPicker;
++        private SaturationBar m_saturationBar;
++        private ValueBar m_valueBar;
++
++        private LEDConfig m_ledConfig;
++
++        @Override
++        public void onColorChanged(int color) {
++            m_ledConfig = new LEDConfig(PSLControl.COMMAND.STATIC, color, PSLControl.DEFAULT_BRIGHTNESS, 0);
++        }
++
++        public PlaceholderFragment() {
++        }
++
++        /**
++         * Returns a new instance of this fragment for the given section
++         * number.
++         */
++        public static PlaceholderFragment newInstance(int sectionNumber) {
++            PlaceholderFragment fragment = new PlaceholderFragment();
++            Bundle args = new Bundle();
++            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
++            fragment.setArguments(args);
++            return fragment;
++        }
++
++        @Override
++        public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                                 Bundle savedInstanceState) {
++
++            m_rootView = inflater.inflate(R.layout.fragment_debug_and_test, container, false);
++
++            TextView textView = (TextView) m_rootView.findViewById(R.id.section_label);
++            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
++
++            m_colorPicker = (ColorPicker) m_rootView.findViewById(R.id.colorPicker);
++            m_colorPicker.setOnColorChangedListener(this);
++
++            m_saturationBar = (SaturationBar) m_rootView.findViewById(R.id.saturationBar);
++            m_valueBar = (ValueBar) m_rootView.findViewById(R.id.valueBar);
++
++            m_colorPicker.addSaturationBar(m_saturationBar);
++            m_colorPicker.addValueBar(m_valueBar);
++
++            Button button = (Button) m_rootView.findViewById(R.id.buttonChangeColor);
++            final TextView statusTextView = (TextView) m_rootView.findViewById(R.id.led_status);
++            button.setOnClickListener(new View.OnClickListener() {
++
++                @Override
++                public void onClick(View v) {
++                    m_colorPicker.setOldCenterColor(m_colorPicker.getColor());
++                    m_ledConfig = new LEDConfig(PSLControl.COMMAND.STATIC, m_colorPicker.getColor(), PSLControl.DEFAULT_BRIGHTNESS, 0);
++                    //statusTextView.setText(m_ledConfig.toString());
++                    //new CheckLEDsStatus().execute("http://192.168.1.10:4567/leds");
++                    new PSLControl.SetLEDsConfig().execute(m_ledConfig);
++                }
++            });
++
++            return m_rootView;
++        }
++    }
++
++    /**
++     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
++     * one of the sections/tabs/pages.
++     */
++    public class SectionsPagerAdapter extends FragmentPagerAdapter {
++
++        public SectionsPagerAdapter(FragmentManager fm) {
++            super(fm);
++        }
++
++        @Override
++        public Fragment getItem(int position) {
++            // getItem is called to instantiate the fragment for the given page.
++            // Return a PlaceholderFragment (defined as a static inner class below).
++            Log.d("Tag selected", ""+position);
++
++            switch (position) {
++                case 0:
++                    return ColorsFragment.newInstance("","");
++                case 1:
++                    return SensorsFragment.newInstance("", "");
++                default:
++                    break;
++            }
++
++            return PlaceholderFragment.newInstance(position + 1);
++        }
++
++        @Override
++        public int getCount() {
++            // Show 3 total pages.
++            return 3;
++        }
++
++        @Override
++        public CharSequence getPageTitle(int position) {
++            switch (position) {
++                case 0:
++                    return "Color selection and effects";
++                case 1:
++                    return "Sensors";
++                case 2:
++                    return "Debug and testing";
++            }
++            return null;
++        }
++    }
++}
+diff --git a/app/src/main/java/es/jmrs/pablossmartlight/PSLControl.java b/app/src/main/java/es/jmrs/pablossmartlight/PSLControl.java
+new file mode 100644
+index 0000000..e69982b
+--- /dev/null
++++ b/app/src/main/java/es/jmrs/pablossmartlight/PSLControl.java
+@@ -0,0 +1,208 @@
++package es.jmrs.pablossmartlight;
++
++import android.content.Context;
++import android.os.AsyncTask;
++import android.util.Log;
++import android.view.View;
++import android.widget.TextView;
++
++import org.apache.http.HttpResponse;
++import org.apache.http.client.HttpClient;
++import org.apache.http.client.methods.HttpGet;
++import org.apache.http.client.methods.HttpPut;
++import org.apache.http.entity.StringEntity;
++import org.apache.http.impl.client.HttpClientBuilder;
++import org.apache.http.util.EntityUtils;
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.io.IOException;
++import java.text.SimpleDateFormat;
++import java.util.Calendar;
++
++public class PSLControl {
++
++    private static final String CONTROL_IP = "192.168.1.17";
++    private static final String CONTROL_PORT = "4567";
++    private static final String LEDS_URL = "/leds";
++    private static final String SENSORS_URL = "/sensors";
++
++    public static final int DEFAULT_BRIGHTNESS = 100;
++
++    public static final class COMMAND
++    {
++        public static final String STATIC = "/color";
++        public static final String CHASE = "/chaser";
++        public static final String RANDOM = "/random";
++        public static final String RANGE = "/range";
++    }
++
++    public static final class CHASER_DELAY
++    {
++        public static final int VERY_SLOW = 150;
++        public static final int SLOW = 100;
++        public static final int NORMAL = 50;
++    }
++    public static final class RANDOM_DELAY
++    {
++        public static final int VERY_SLOW = 1500;
++        public static final int SLOW = 1000;
++        public static final int NORMAL = 500;
++    }
++    public static final class BRIGHTNESS
++    {
++        public static final int VERY_LOW = 15;
++        public static final int LOW = 25;
++        public static final int NORMAL = 50;
++    }
++
++    public static class SetLEDsConfig extends AsyncTask<LEDConfig, Void, Integer> {
++
++        private static String URL = "http://" + CONTROL_IP + ":" + CONTROL_PORT + LEDS_URL;
++
++        protected Integer doInBackground(LEDConfig... params) {
++
++            HttpClient client = HttpClientBuilder.create().build();
++
++            LEDConfig ledConfig = params[0];
++
++            HttpPut putRequest = new HttpPut(URL + ledConfig.getCommmand());
++            putRequest.addHeader("Content-Type", "application/json");
++            putRequest.addHeader("Accept", "application/json");
++
++            JSONObject putArguments = new JSONObject();
++            try {
++                putArguments.put("RGB", ledConfig.getRGB());
++                putArguments.put("brightness", ledConfig.getBrightness());
++                putArguments.put("delay", ledConfig.getDelay());
++
++                StringEntity entity = new StringEntity(putArguments.toString());
++                putRequest.setEntity(entity);
++
++                return client.execute(putRequest).getStatusLine().getStatusCode();
++            } catch (IOException e) {
++                e.printStackTrace();
++            } catch (JSONException e) {
++                e.printStackTrace();
++            }
++            return -1;
++        }
++
++    }
++
++    public static class GetSensorsInformation extends AsyncTask<Void, Void, SensorsInformation> {
++
++        private static String URL = "http://" + CONTROL_IP + ":" + CONTROL_PORT + SENSORS_URL;
++
++        private Context m_context;
++        private View m_rootView;
++
++        public GetSensorsInformation (Context context, View rootView)
++        {
++            m_context = context;
++            m_rootView = rootView;
++        }
++
++        @Override
++        protected SensorsInformation doInBackground(Void... params) {
++
++            HttpClient client = HttpClientBuilder.create().build();
++            HttpGet getRequest = new HttpGet(URL);
++
++            try {
++                HttpResponse response = client.execute(getRequest);
++                String information = EntityUtils.toString(response.getEntity());
++
++                JSONObject jsonInformation = new JSONObject(information);
++
++                String infoField = jsonInformation.getString(SensorsInformation.JSON_TAG.DHT_VALID);
++                Boolean dhtValid = Boolean.parseBoolean(infoField);
++
++                float temperature = 0, humidity = 0, pressure = 0, bmpTemperature = 0;
++
++                Log.d("response", jsonInformation.toString());
++                if (dhtValid) {
++                    infoField = jsonInformation.getString(SensorsInformation.JSON_TAG.TEMPERATURE);
++                    temperature = Float.parseFloat(infoField) / SensorsInformation.FACTOR;
++                    infoField = jsonInformation.getString(SensorsInformation.JSON_TAG.HUMIDITY);
++                    humidity = Float.parseFloat(infoField) / SensorsInformation.FACTOR;
++                }
++
++                infoField = jsonInformation.getString(SensorsInformation.JSON_TAG.BMP_VALID);
++                Boolean bmpValid = Boolean.parseBoolean(infoField);
++                if (bmpValid) {
++                    infoField = jsonInformation.getString(SensorsInformation.JSON_TAG.PRESSURE);
++                    pressure = Float.parseFloat(infoField) / SensorsInformation.FACTOR;
++                    infoField = jsonInformation.getString(SensorsInformation.JSON_TAG.BMT_TEMPERATURE);
++                    bmpTemperature = Float.parseFloat(infoField) / SensorsInformation.FACTOR;
++                }
++
++                return new SensorsInformation(dhtValid, temperature, humidity, bmpValid, pressure, bmpTemperature);
++
++            } catch (IOException e) {
++                e.printStackTrace();
++            } catch (JSONException e) {
++                e.printStackTrace();
++            }
++
++            return new SensorsInformation();
++        }
++
++        @Override
++        protected void onPostExecute(SensorsInformation info)
++        {
++            String failure = "Failed to retrieve information: ";
++            TextView textView;
++            String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
++
++            if (info.IsDhtValid()) {
++                textView = (TextView) m_rootView.findViewById(R.id.textViewTemperature);
++                textView.setText(String.format("Temperature: %.2f °C", info.getTemperature()));
++                textView = (TextView) m_rootView.findViewById(R.id.textViewHumidity);
++                textView.setText(String.format("Humidity: %.2f %%", info.getHumidity()));
++            }
++            else {
++                failure += "Temp/Humid ";
++            }
++
++            if (info.IsBmpValid()) {
++
++                textView = (TextView) m_rootView.findViewById(R.id.textViewPressure);
++                textView.setText(String.format("Pressure: %.2f hPa", info.getPressure()));
++                textView = (TextView) m_rootView.findViewById(R.id.textViewBmpTemperature);
++                textView.setText(String.format("Internal temperature: %.2f °C", info.getBmpTemperature()));
++            }
++            else {
++                failure += "Press";
++            }
++
++            textView = (TextView) m_rootView.findViewById(R.id.textViewStatus);
++
++            if (info.IsDhtValid() && info.IsBmpValid()) {
++                textView.setText("Updated at " + timeStamp);
++            }
++            else
++            {
++                textView.setText(failure);
++            }
++
++            int fakeColor = SensorsInformation.MAX_TEMPERATURE << 16;
++            fakeColor = fakeColor | ((int)Math.round(info.getTemperature()) << 8);
++            fakeColor = fakeColor | SensorsInformation.MIN_TEMPERATURE;
++            new PSLControl.SetLEDsConfig().execute(new LEDConfig(PSLControl.COMMAND.RANGE, fakeColor, 100, 0));
++
++
++            try {
++                Thread.sleep(5000);
++            } catch (InterruptedException e) {
++                e.printStackTrace();
++            }
++
++            fakeColor = SensorsInformation.MIN_HUMIDITY << 16;
++            fakeColor = fakeColor | ((int)Math.round(info.getHumidity()) << 8);
++            fakeColor = fakeColor | SensorsInformation.MAX_HUMIDITY;
++            new PSLControl.SetLEDsConfig().execute(new LEDConfig(PSLControl.COMMAND.RANGE, fakeColor, 100, 0));
++        }
++    }
++
++}
+diff --git a/app/src/main/java/es/jmrs/pablossmartlight/SensorsFragment.java b/app/src/main/java/es/jmrs/pablossmartlight/SensorsFragment.java
+new file mode 100644
+index 0000000..bb882ba
+--- /dev/null
++++ b/app/src/main/java/es/jmrs/pablossmartlight/SensorsFragment.java
+@@ -0,0 +1,113 @@
++package es.jmrs.pablossmartlight;
++
++import android.net.Uri;
++import android.os.Bundle;
++import android.support.v4.app.Fragment;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.Button;
++import android.widget.TextView;
++
++
++/**
++ * A simple {@link Fragment} subclass.
++ * Activities that contain this fragment must implement the
++ * {@link SensorsFragment.OnFragmentInteractionListener} interface
++ * to handle interaction events.
++ * Use the {@link SensorsFragment#newInstance} factory method to
++ * create an instance of this fragment.
++ *
++ */
++public class SensorsFragment extends Fragment {
++    // TODO: Rename parameter arguments, choose names that match
++    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
++    private static final String ARG_PARAM1 = "param1";
++    private static final String ARG_PARAM2 = "param2";
++
++    // TODO: Rename and change types of parameters
++    private String mParam1;
++    private String mParam2;
++
++    private View m_fragmentView = null;
++
++    private OnFragmentInteractionListener mListener;
++
++    /**
++     * Use this factory method to create a new instance of
++     * this fragment using the provided parameters.
++     *
++     * @param param1 Parameter 1.
++     * @param param2 Parameter 2.
++     * @return A new instance of fragment SensorsFragment.
++     */
++    // TODO: Rename and change types and number of parameters
++    public static SensorsFragment newInstance(String param1, String param2) {
++        SensorsFragment fragment = new SensorsFragment();
++        Bundle args = new Bundle();
++        args.putString(ARG_PARAM1, param1);
++        args.putString(ARG_PARAM2, param2);
++        fragment.setArguments(args);
++        return fragment;
++    }
++    public SensorsFragment() {
++        // Required empty public constructor
++    }
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        if (getArguments() != null) {
++            mParam1 = getArguments().getString(ARG_PARAM1);
++            mParam2 = getArguments().getString(ARG_PARAM2);
++        }
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++
++        m_fragmentView = inflater.inflate(R.layout.fragment_sensors, container, false);
++
++        Button m_retrieveButton = (Button) m_fragmentView.findViewById(R.id.buttonRetrieve);
++        m_retrieveButton.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                TextView status = (TextView) m_fragmentView.findViewById(R.id.textViewStatus);
++                status.setText("Retrieving information...");
++                new PSLControl.GetSensorsInformation(getActivity(), m_fragmentView).execute();
++            }
++        });
++
++        return m_fragmentView;
++    }
++
++    // TODO: Rename method, update argument and hook method into UI event
++    public void onButtonPressed(Uri uri) {
++        if (mListener != null) {
++            mListener.onFragmentInteraction(uri);
++        }
++    }
++
++    @Override
++    public void onDetach() {
++        super.onDetach();
++        mListener = null;
++    }
++
++    /**
++     * This interface must be implemented by activities that contain this
++     * fragment to allow an interaction in this fragment to be communicated
++     * to the activity and potentially other fragments contained in that
++     * activity.
++     * <p>
++     * See the Android Training lesson <a href=
++     * "http://developer.android.com/training/basics/fragments/communicating.html"
++     * >Communicating with Other Fragments</a> for more information.
++     */
++    public interface OnFragmentInteractionListener {
++        // TODO: Update argument type and name
++        void onFragmentInteraction(Uri uri);
++    }
++}
+diff --git a/app/src/main/java/es/jmrs/pablossmartlight/SensorsInformation.java b/app/src/main/java/es/jmrs/pablossmartlight/SensorsInformation.java
+new file mode 100644
+index 0000000..15342b4
+--- /dev/null
++++ b/app/src/main/java/es/jmrs/pablossmartlight/SensorsInformation.java
+@@ -0,0 +1,61 @@
++package es.jmrs.pablossmartlight;
++
++/**
++ * Created by jmrodriguez on 20/12/2015.
++ */
++public class SensorsInformation {
++
++    public static final int MIN_TEMPERATURE = 16;
++    public static final int MAX_TEMPERATURE = 22;
++    public static final int MIN_HUMIDITY = 40;
++    public static final int MAX_HUMIDITY = 60;
++
++    private boolean m_dhtValid;
++    private double m_temperature;
++    private double m_humidity;
++    private boolean m_bmpValid;
++    private double m_pressure;
++    private double m_bmpTemperature;
++
++    public static final class JSON_TAG
++    {
++        public static final String DHT_VALID = "dhtvalid";
++        public static final String TEMPERATURE = "temperature";
++        public static final String HUMIDITY = "humidity";
++        public static final String BMP_VALID = "bmpvalid";
++        public static final String PRESSURE = "pressure";
++        public static final String BMT_TEMPERATURE = "bmptemperature";
++    }
++
++    public static final float FACTOR = 10;
++
++    public SensorsInformation()
++    {
++        m_dhtValid = m_bmpValid = false;
++        m_temperature = m_humidity = m_pressure = m_bmpTemperature = 0;
++    }
++
++    public SensorsInformation(
++            boolean dhtValid,
++            double temperature,
++            double humidity,
++            boolean bmpValid,
++            double pressure,
++            double bmpTemperature
++    )
++    {
++        m_dhtValid = dhtValid;
++        m_temperature = temperature;
++        m_humidity = humidity;
++        m_bmpValid = bmpValid;
++        m_pressure = pressure;
++        m_bmpTemperature = bmpTemperature;
++    }
++
++    boolean IsDhtValid() { return m_dhtValid; }
++    boolean IsBmpValid() { return m_bmpValid; }
++    double getTemperature() { return m_temperature; }
++    double getHumidity() { return m_humidity; }
++    double getPressure() { return m_pressure; }
++    double getBmpTemperature() { return m_bmpTemperature; }
++}
+diff --git a/app/src/main/java/layout/ColorsFragment.java b/app/src/main/java/layout/ColorsFragment.java
+new file mode 100644
+index 0000000..8085e3f
+--- /dev/null
++++ b/app/src/main/java/layout/ColorsFragment.java
+@@ -0,0 +1,177 @@
++package layout;
++
++import android.net.Uri;
++import android.os.Bundle;
++import android.support.v4.app.Fragment;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.RadioGroup;
++import android.widget.TextView;
++import android.widget.ToggleButton;
++
++import es.jmrs.pablossmartlight.LEDConfig;
++import es.jmrs.pablossmartlight.PSLControl;
++import es.jmrs.pablossmartlight.R;
++
++/**
++ * A simple {@link Fragment} subclass.
++ * Activities that contain this fragment must implement the
++ * {@link ColorsFragment.OnFragmentInteractionListener} interface
++ * to handle interaction events.
++ * Use the {@link ColorsFragment#newInstance} factory method to
++ * create an instance of this fragment.
++ */
++public class ColorsFragment extends Fragment implements RadioGroup.OnCheckedChangeListener {
++    // TODO: Rename parameter arguments, choose names that match
++    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
++    private static final String ARG_PARAM1 = "param1";
++    private static final String ARG_PARAM2 = "param2";
++
++    // TODO: Rename and change types of parameters
++    private String mParam1;
++    private String mParam2;
++
++    private View m_fragmentView = null;
++    private TextView m_selectionTextView = null;
++    private ToggleButton m_toggle = null;
++    private RadioGroup m_colorGroup = null;
++    private RadioGroup m_effectGroup = null;
++    private RadioGroup m_speedGroup = null;
++    private RadioGroup m_brightnessGroup = null;
++
++    private int m_color;
++    private String m_effect;
++    private int m_brightness;
++    private int m_delay;
++
++    private OnFragmentInteractionListener mListener;
++
++    public ColorsFragment() {
++        // Required empty public constructor
++    }
++
++    /**
++     * Use this factory method to create a new instance of
++     * this fragment using the provided parameters.
++     *
++     * @param param1 Parameter 1.
++     * @param param2 Parameter 2.
++     * @return A new instance of fragment ColorsFragment.
++     */
++    // TODO: Rename and change types and number of parameters
++    public static ColorsFragment newInstance(String param1, String param2) {
++        ColorsFragment fragment = new ColorsFragment();
++        Bundle args = new Bundle();
++        args.putString(ARG_PARAM1, param1);
++        args.putString(ARG_PARAM2, param2);
++        fragment.setArguments(args);
++        return fragment;
++    }
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        if (getArguments() != null) {
++            mParam1 = getArguments().getString(ARG_PARAM1);
++            mParam2 = getArguments().getString(ARG_PARAM2);
++        }
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        m_fragmentView = inflater.inflate(R.layout.fragment_colors, container, false);
++        return m_fragmentView;
++    }
++
++    @Override
++    public void onViewCreated(View view, Bundle savedInstanceState)
++    {
++        m_colorGroup = (RadioGroup) m_fragmentView.findViewById(R.id.radioGroupColor);
++        m_colorGroup.setOnCheckedChangeListener(this);
++        m_effectGroup = (RadioGroup) m_fragmentView.findViewById(R.id.radioGroupEffect);
++        m_effectGroup.setOnCheckedChangeListener(this);
++        m_speedGroup = (RadioGroup) m_fragmentView.findViewById(R.id.radioGroupSpeed);
++        m_speedGroup.setOnCheckedChangeListener(this);
++        m_brightnessGroup = (RadioGroup) m_fragmentView.findViewById(R.id.radioGroupBrightness);
++        m_brightnessGroup.setOnCheckedChangeListener(this);
++    }
++
++    // TODO: Rename method, update argument and hook method into UI event
++    public void onButtonPressed(Uri uri) {
++        if (mListener != null) {
++            mListener.onFragmentInteraction(uri);
++        }
++    }
++
++    @Override
++    public void onDetach() {
++        super.onDetach();
++        mListener = null;
++    }
++
++    @Override
++    public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
++
++        int checked = m_colorGroup.getCheckedRadioButtonId();
++
++        if(checked == R.id.radioButtonRed) {
++            m_color = 0x00FF0000;
++        } else if(checked == R.id.radioButtonGreen) {
++            m_color = 0x0000FF00;
++        } else if(checked == R.id.radioButtonBlue) {
++            m_color = 0x000000FF;
++        }
++
++        checked = m_effectGroup.getCheckedRadioButtonId();
++
++        if(checked == R.id.radioButtonStatic) {
++            m_effect = PSLControl.COMMAND.STATIC;
++        } else if(checked == R.id.radioButtonChaser) {
++            m_effect = PSLControl.COMMAND.CHASE;
++        } else if(checked == R.id.radioButtonRandom) {
++            m_effect = PSLControl.COMMAND.RANDOM;
++        }
++
++        checked = m_speedGroup.getCheckedRadioButtonId();
++
++        if (m_effect == PSLControl.COMMAND.STATIC) {
++            m_delay = 0;
++        } else if(checked == R.id.radioButtonVerySlow) {
++            m_delay = m_effect == "chaser" ? PSLControl.CHASER_DELAY.VERY_SLOW : PSLControl.RANDOM_DELAY.VERY_SLOW;
++        } else if(checked == R.id.radioButtonSlow) {
++            m_delay = m_effect == "chaser" ? PSLControl.CHASER_DELAY.SLOW : PSLControl.RANDOM_DELAY.SLOW;
++        } else if(checked == R.id.radioButtonNormalSpeed) {
++            m_delay = m_effect == "chaser" ? PSLControl.CHASER_DELAY.NORMAL : PSLControl.RANDOM_DELAY.NORMAL;
++        }
++
++        checked = m_brightnessGroup.getCheckedRadioButtonId();
++
++        if(checked == R.id.radioButtonVeryLow) {
++            m_brightness = PSLControl.BRIGHTNESS.VERY_LOW;
++        } else if(checked == R.id.radioButtonLow) {
++            m_brightness = PSLControl.BRIGHTNESS.LOW;
++        } else if(checked == R.id.radioButtonNormalBrightness) {
++            m_brightness = PSLControl.BRIGHTNESS.NORMAL;
++        }
++
++        new PSLControl.SetLEDsConfig().execute(new LEDConfig(m_effect, m_color, m_brightness, m_delay));
++    }
++
++    /**
++     * This interface must be implemented by activities that contain this
++     * fragment to allow an interaction in this fragment to be communicated
++     * to the activity and potentially other fragments contained in that
++     * activity.
++     * <p/>
++     * See the Android Training lesson <a href=
++     * "http://developer.android.com/training/basics/fragments/communicating.html"
++     * >Communicating with Other Fragments</a> for more information.
++     */
++    public interface OnFragmentInteractionListener {
++        // TODO: Update argument type and name
++        void onFragmentInteraction(Uri uri);
++    }
++}
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+new file mode 100644
+index 0000000..f8f93b2
+--- /dev/null
++++ b/app/src/main/res/layout/activity_main.xml
+@@ -0,0 +1,47 @@
++<?xml version="1.0" encoding="utf-8"?>
++<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/main_content"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:fitsSystemWindows="true"
++    tools:context="es.jmrs.pablossmartlight.MainActivity">
++
++    <android.support.design.widget.AppBarLayout
++        android:id="@+id/appbar"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:paddingTop="@dimen/appbar_padding_top"
++        android:theme="@style/AppTheme.AppBarOverlay">
++
++        <android.support.v7.widget.Toolbar
++            android:id="@+id/toolbar"
++            android:layout_width="match_parent"
++            android:layout_height="?attr/actionBarSize"
++            android:background="?attr/colorPrimary"
++            app:layout_scrollFlags="scroll|enterAlways"
++            app:popupTheme="@style/AppTheme.PopupOverlay">
++
++        </android.support.v7.widget.Toolbar>
++
++    </android.support.design.widget.AppBarLayout>
++
++    <android.support.v4.view.ViewPager
++        android:id="@+id/container"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        app:layout_behavior="@string/appbar_scrolling_view_behavior">
++
++    <android.support.v4.view.PagerTitleStrip
++        android:id="@+id/pager_title_strip"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:layout_gravity="top"
++        android:background="#33b5e5"
++        android:textColor="#fff"
++        android:paddingTop="4dp"
++        android:paddingBottom="4dp" />
++    </android.support.v4.view.ViewPager>
++
++</android.support.design.widget.CoordinatorLayout>
+diff --git a/app/src/main/res/layout/fragment_colors.xml b/app/src/main/res/layout/fragment_colors.xml
+new file mode 100644
+index 0000000..bb4cb5b
+--- /dev/null
++++ b/app/src/main/res/layout/fragment_colors.xml
+@@ -0,0 +1,153 @@
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context="layout.ColorsFragment"
++    android:orientation="vertical">
++
++    <TextView
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:text="Color"
++        android:id="@+id/textView"
++        android:textSize="@dimen/abc_text_size_large_material"
++        android:textAlignment="center" />
++
++
++    <RadioGroup
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:layout_gravity="left|top"
++        android:id="@+id/radioGroupColor">
++
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Red"
++            android:id="@+id/radioButtonRed"
++            android:textColor="#FF0000"
++            android:textSize="@dimen/abc_text_size_medium_material"
++            android:checked="true" />
++
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Green"
++            android:id="@+id/radioButtonGreen"
++            android:textColor="#00FF00"
++            android:textSize="@dimen/abc_text_size_medium_material" />
++
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Blue"
++            android:id="@+id/radioButtonBlue"
++            android:textColor="#0000FF"
++            android:textSize="@dimen/abc_text_size_medium_material" />
++
++    </RadioGroup>
++
++    <TextView
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:text="Effect"
++        android:id="@+id/textView2"
++        android:textSize="@dimen/abc_text_size_large_material"
++        android:textAlignment="center"  />
++
++    <RadioGroup
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:id="@+id/radioGroupEffect">
++
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Static"
++            android:id="@+id/radioButtonStatic"
++            android:textSize="@dimen/abc_text_size_medium_material"
++            android:checked="true" />
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Chaser"
++            android:id="@+id/radioButtonChaser"
++            android:textSize="@dimen/abc_text_size_medium_material"
++            android:checked="false" />
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Random"
++            android:id="@+id/radioButtonRandom"
++            android:textSize="@dimen/abc_text_size_medium_material" />
++    </RadioGroup>
++
++    <TextView
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:text="Speed"
++        android:id="@+id/textView3"
++        android:textSize="@dimen/abc_text_size_large_material"
++        android:textAlignment="center"  />
++
++    <RadioGroup
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:id="@+id/radioGroupSpeed">
++
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Very Slow"
++            android:id="@+id/radioButtonVerySlow"
++            android:textSize="@dimen/abc_text_size_medium_material"
++            android:checked="true" />
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Slow"
++            android:id="@+id/radioButtonSlow"
++            android:textSize="@dimen/abc_text_size_medium_material" />
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Normal"
++            android:id="@+id/radioButtonNormalSpeed"
++            android:textSize="@dimen/abc_text_size_medium_material" />
++    </RadioGroup>
++
++    <TextView
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:text="Brightness"
++        android:id="@+id/textView4"
++        android:textSize="@dimen/abc_text_size_large_material"
++        android:textAlignment="center"  />
++
++    <RadioGroup
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:id="@+id/radioGroupBrightness">
++
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Very Low"
++            android:id="@+id/radioButtonVeryLow"
++            android:textSize="@dimen/abc_text_size_medium_material"
++            android:checked="true" />
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Low"
++            android:id="@+id/radioButtonLow"
++            android:textSize="@dimen/abc_text_size_medium_material" />
++        <RadioButton
++            android:layout_width="fill_parent"
++            android:layout_height="wrap_content"
++            android:text="Normal"
++            android:id="@+id/radioButtonNormalBrightness"
++            android:textSize="@dimen/abc_text_size_medium_material" />
++    </RadioGroup>
++
++</LinearLayout>
+diff --git a/app/src/main/res/layout/fragment_debug_and_test.xml b/app/src/main/res/layout/fragment_debug_and_test.xml
+new file mode 100644
+index 0000000..9fd509f
+--- /dev/null
++++ b/app/src/main/res/layout/fragment_debug_and_test.xml
+@@ -0,0 +1,56 @@
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:paddingBottom="@dimen/activity_vertical_margin"
++    android:paddingLeft="@dimen/activity_horizontal_margin"
++    android:paddingRight="@dimen/activity_horizontal_margin"
++    android:paddingTop="@dimen/activity_vertical_margin"
++    tools:context="es.jmrs.pablossmartlight.MainActivity$PlaceholderFragment">
++
++    <TextView
++        android:id="@+id/section_label"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Section"
++        android:layout_alignParentBottom="true"
++        android:layout_alignParentStart="true" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Status"
++        android:id="@+id/led_status"
++        android:layout_below="@+id/buttonChangeColor"
++        android:layout_alignParentStart="true" />
++
++    <com.larswerkman.holocolorpicker.ColorPicker
++        android:id="@+id/colorPicker"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_alignParentTop="true"
++        android:layout_centerHorizontal="true"  />
++
++    <com.larswerkman.holocolorpicker.SaturationBar
++        android:id="@+id/saturationBar"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_below="@+id/valueBar"
++        android:layout_centerHorizontal="true" />
++
++    <com.larswerkman.holocolorpicker.ValueBar
++        android:id="@+id/valueBar"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_below="@+id/colorPicker"
++        android:layout_centerHorizontal="true"  />
++
++    <Button
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Change Color"
++        android:id="@+id/buttonChangeColor"
++        android:layout_below="@+id/saturationBar"
++        android:layout_centerHorizontal="true" />
++
++</RelativeLayout>
+diff --git a/app/src/main/res/layout/fragment_main.xml b/app/src/main/res/layout/fragment_main.xml
+new file mode 100644
+index 0000000..9fd509f
+--- /dev/null
++++ b/app/src/main/res/layout/fragment_main.xml
+@@ -0,0 +1,56 @@
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:paddingBottom="@dimen/activity_vertical_margin"
++    android:paddingLeft="@dimen/activity_horizontal_margin"
++    android:paddingRight="@dimen/activity_horizontal_margin"
++    android:paddingTop="@dimen/activity_vertical_margin"
++    tools:context="es.jmrs.pablossmartlight.MainActivity$PlaceholderFragment">
++
++    <TextView
++        android:id="@+id/section_label"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Section"
++        android:layout_alignParentBottom="true"
++        android:layout_alignParentStart="true" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Status"
++        android:id="@+id/led_status"
++        android:layout_below="@+id/buttonChangeColor"
++        android:layout_alignParentStart="true" />
++
++    <com.larswerkman.holocolorpicker.ColorPicker
++        android:id="@+id/colorPicker"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_alignParentTop="true"
++        android:layout_centerHorizontal="true"  />
++
++    <com.larswerkman.holocolorpicker.SaturationBar
++        android:id="@+id/saturationBar"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_below="@+id/valueBar"
++        android:layout_centerHorizontal="true" />
++
++    <com.larswerkman.holocolorpicker.ValueBar
++        android:id="@+id/valueBar"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_below="@+id/colorPicker"
++        android:layout_centerHorizontal="true"  />
++
++    <Button
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Change Color"
++        android:id="@+id/buttonChangeColor"
++        android:layout_below="@+id/saturationBar"
++        android:layout_centerHorizontal="true" />
++
++</RelativeLayout>
+diff --git a/app/src/main/res/layout/fragment_sensors.xml b/app/src/main/res/layout/fragment_sensors.xml
+new file mode 100644
+index 0000000..1e2ddc2
+--- /dev/null
++++ b/app/src/main/res/layout/fragment_sensors.xml
+@@ -0,0 +1,77 @@
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".SensorsFragment">
++
++    <!-- TODO: Update blank fragment layout -->
++
++    <TextView
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:text="Sensors"
++        android:id="@+id/textView5"
++        android:textSize="@dimen/abc_text_size_large_material"
++        android:textAlignment="center"
++        android:layout_gravity="center_horizontal|top" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="No temperature yet"
++        android:id="@+id/textViewTemperature"
++        android:textSize="@dimen/abc_text_size_medium_material"
++        android:layout_gravity="left|top"
++        android:layout_below="@+id/textView5"
++        android:layout_alignParentStart="true" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="No humidity yet"
++        android:id="@+id/textViewHumidity"
++        android:textSize="@dimen/abc_text_size_medium_material"
++        android:layout_gravity="left|top"
++        android:layout_below="@+id/textViewTemperature"
++        android:layout_alignParentStart="true" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="No pressure yet"
++        android:id="@+id/textViewPressure"
++        android:textSize="@dimen/abc_text_size_medium_material"
++        android:layout_gravity="left|top"
++        android:layout_below="@+id/textViewHumidity"
++        android:layout_alignParentStart="true" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="No internal temperature yet"
++        android:id="@+id/textViewBmpTemperature"
++        android:textSize="@dimen/abc_text_size_medium_material"
++        android:layout_gravity="left|top"
++        android:layout_below="@+id/textViewPressure"
++        android:layout_alignParentStart="true" />
++
++    <Button
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Update"
++        android:id="@+id/buttonRetrieve"
++        android:layout_below="@+id/textViewBmpTemperature"
++        android:layout_alignParentStart="true"
++        android:layout_marginTop="50dp" />
++
++    <TextView
++        android:layout_width="fill_parent"
++        android:layout_height="wrap_content"
++        android:text="Update for information"
++        android:id="@+id/textViewStatus"
++        android:textSize="@dimen/abc_text_size_large_material"
++        android:layout_gravity="center_horizontal|top"
++        android:layout_below="@+id/buttonRetrieve"
++        android:layout_alignParentStart="true" />
++
++</RelativeLayout>
+diff --git a/app/src/main/res/menu/menu_main.xml b/app/src/main/res/menu/menu_main.xml
+new file mode 100644
+index 0000000..db22863
+--- /dev/null
++++ b/app/src/main/res/menu/menu_main.xml
+@@ -0,0 +1,10 @@
++<menu xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    tools:context="es.jmrs.pablossmartlight.MainActivity">
++    <item
++        android:id="@+id/action_settings"
++        android:orderInCategory="100"
++        android:title="@string/action_settings"
++        app:showAsAction="never" />
++</menu>
+diff --git a/app/src/main/res/mipmap-hdpi/ic_launcher.png b/app/src/main/res/mipmap-hdpi/ic_launcher.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..cde69bcccec65160d92116f20ffce4fce0b5245c
+GIT binary patch
+literal 3418
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/app/src/main/res/mipmap-mdpi/ic_launcher.png b/app/src/main/res/mipmap-mdpi/ic_launcher.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..c133a0cbd379f5af6dbf1a899a0293ca5eccfad0
+GIT binary patch
+literal 2206
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/app/src/main/res/mipmap-xhdpi/ic_launcher.png b/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..bfa42f0e7b91d006d22352c9ff2f134e504e3c1d
+GIT binary patch
+literal 4842
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/app/src/main/res/mipmap-xxhdpi/ic_launcher.png b/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..324e72cdd7480cb983fa1bcc7ce686e51ef87fe7
+GIT binary patch
+literal 7718
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png b/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..aee44e138434630332d88b1680f33c4b24c70ab3
+GIT binary patch
+literal 10486
+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
+acChvT-wm8jF7_S`fH(4La<wuRVgChb86-jg
+
+literal 0
+HcmV?d00001
+
+diff --git a/app/src/main/res/values-v21/styles.xml b/app/src/main/res/values-v21/styles.xml
+new file mode 100644
+index 0000000..251fb9f
+--- /dev/null
++++ b/app/src/main/res/values-v21/styles.xml
+@@ -0,0 +1,9 @@
++<resources>>
++
++    <style name="AppTheme.NoActionBar">
++        <item name="windowActionBar">false</item>
++        <item name="windowNoTitle">true</item>
++        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
++        <item name="android:statusBarColor">@android:color/transparent</item>
++    </style>
++</resources>
+diff --git a/app/src/main/res/values-w820dp/dimens.xml b/app/src/main/res/values-w820dp/dimens.xml
+new file mode 100644
+index 0000000..63fc816
+--- /dev/null
++++ b/app/src/main/res/values-w820dp/dimens.xml
+@@ -0,0 +1,6 @@
++<resources>
++    <!-- Example customization of dimensions originally defined in res/values/dimens.xml
++         (such as screen margins) for screens with more than 820dp of available width. This
++         would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively). -->
++    <dimen name="activity_horizontal_margin">64dp</dimen>
++</resources>
+diff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml
+new file mode 100644
+index 0000000..3ab3e9c
+--- /dev/null
++++ b/app/src/main/res/values/colors.xml
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <color name="colorPrimary">#3F51B5</color>
++    <color name="colorPrimaryDark">#303F9F</color>
++    <color name="colorAccent">#FF4081</color>
++</resources>
+diff --git a/app/src/main/res/values/dimens.xml b/app/src/main/res/values/dimens.xml
+new file mode 100644
+index 0000000..cef3abc
+--- /dev/null
++++ b/app/src/main/res/values/dimens.xml
+@@ -0,0 +1,7 @@
++<resources>
++    <!-- Default screen margins, per the Android Design guidelines. -->
++    <dimen name="activity_horizontal_margin">16dp</dimen>
++    <dimen name="activity_vertical_margin">16dp</dimen>
++    <dimen name="fab_margin">16dp</dimen>
++    <dimen name="appbar_padding_top">8dp</dimen>
++</resources>
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+new file mode 100644
+index 0000000..13c19c5
+--- /dev/null
++++ b/app/src/main/res/values/strings.xml
+@@ -0,0 +1,8 @@
++<resources>
++    <string name="app_name">PablosSmartLight</string>
++    <string name="action_settings">Settings</string>
++    <string name="section_format">Hello World from section: %1$d</string>
++
++    <!-- TODO: Remove or change this placeholder text -->
++    <string name="hello_blank_fragment">Hello blank fragment</string>
++</resources>
+diff --git a/app/src/main/res/values/styles.xml b/app/src/main/res/values/styles.xml
+new file mode 100644
+index 0000000..545b9c6
+--- /dev/null
++++ b/app/src/main/res/values/styles.xml
+@@ -0,0 +1,20 @@
++<resources>
++
++    <!-- Base application theme. -->
++    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
++        <!-- Customize your theme here. -->
++        <item name="colorPrimary">@color/colorPrimary</item>
++        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
++        <item name="colorAccent">@color/colorAccent</item>
++    </style>
++
++    <style name="AppTheme.NoActionBar">
++        <item name="windowActionBar">false</item>
++        <item name="windowNoTitle">true</item>
++    </style>
++
++    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
++
++    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
++
++</resources>
+diff --git a/app/src/test/java/es/jmrs/pablossmartlight/ExampleUnitTest.java b/app/src/test/java/es/jmrs/pablossmartlight/ExampleUnitTest.java
+new file mode 100644
+index 0000000..5e05ea4
+--- /dev/null
++++ b/app/src/test/java/es/jmrs/pablossmartlight/ExampleUnitTest.java
+@@ -0,0 +1,15 @@
++package es.jmrs.pablossmartlight;
++
++import org.junit.Test;
++
++import static org.junit.Assert.*;
++
++/**
++ * To work on unit tests, switch the Test Artifact in the Build Variants view.
++ */
++public class ExampleUnitTest {
++    @Test
++    public void addition_isCorrect() throws Exception {
++        assertEquals(4, 2 + 2);
++    }
++}
+\ No newline at end of file
+diff --git a/build.gradle b/build.gradle
+new file mode 100644
+index 0000000..e0b366a
+--- /dev/null
++++ b/build.gradle
+@@ -0,0 +1,23 @@
++// Top-level build file where you can add configuration options common to all sub-projects/modules.
++
++buildscript {
++    repositories {
++        jcenter()
++    }
++    dependencies {
++        classpath 'com.android.tools.build:gradle:1.5.0'
++
++        // NOTE: Do not place your application dependencies here; they belong
++        // in the individual module build.gradle files
++    }
++}
++
++allprojects {
++    repositories {
++        jcenter()
++    }
++}
++
++task clean(type: Delete) {
++    delete rootProject.buildDir
++}
+diff --git a/gradle.properties b/gradle.properties
+new file mode 100644
+index 0000000..1d3591c
+--- /dev/null
++++ b/gradle.properties
+@@ -0,0 +1,18 @@
++# Project-wide Gradle settings.
++
++# IDE (e.g. Android Studio) users:
++# Gradle settings configured through the IDE *will override*
++# any settings specified in this file.
++
++# For more details on how to configure your build environment visit
++# http://www.gradle.org/docs/current/userguide/build_environment.html
++
++# Specifies the JVM arguments used for the daemon process.
++# The setting is particularly useful for tweaking memory settings.
++# Default value: -Xmx10248m -XX:MaxPermSize=256m
++# org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
++
++# When configured, Gradle will run in incubating parallel mode.
++# This option should only be used with decoupled projects. More details, visit
++# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
++# org.gradle.parallel=true
+\ No newline at end of file
+diff --git a/gradle/wrapper/gradle-wrapper.jar b/gradle/wrapper/gradle-wrapper.jar
+new file mode 100644
+index 0000000000000000000000000000000000000000..05ef575b0cd0173fc735f2857ce4bd594ce4f6bd
+GIT binary patch
+literal 53637
+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
+zYr0o^9?5tU(Im)Z69UT;%0A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
+Gum1;HWJz!U
+
+literal 0
+HcmV?d00001
+
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+new file mode 100644
+index 0000000..f23df6e
+--- /dev/null
++++ b/gradle/wrapper/gradle-wrapper.properties
+@@ -0,0 +1,6 @@
++#Wed Oct 21 11:34:03 PDT 2015
++distributionBase=GRADLE_USER_HOME
++distributionPath=wrapper/dists
++zipStoreBase=GRADLE_USER_HOME
++zipStorePath=wrapper/dists
++distributionUrl=https\://services.gradle.org/distributions/gradle-2.8-all.zip
+diff --git a/gradlew b/gradlew
+new file mode 100644
+index 0000000..9d82f78
+--- /dev/null
++++ b/gradlew
+@@ -0,0 +1,160 @@
++#!/usr/bin/env bash
++
++##############################################################################
++##
++##  Gradle start up script for UN*X
++##
++##############################################################################
++
++# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
++DEFAULT_JVM_OPTS=""
++
++APP_NAME="Gradle"
++APP_BASE_NAME=`basename "$0"`
++
++# Use the maximum available, or set MAX_FD != -1 to use that value.
++MAX_FD="maximum"
++
++warn ( ) {
++    echo "$*"
++}
++
++die ( ) {
++    echo
++    echo "$*"
++    echo
++    exit 1
++}
++
++# OS specific support (must be 'true' or 'false').
++cygwin=false
++msys=false
++darwin=false
++case "`uname`" in
++  CYGWIN* )
++    cygwin=true
++    ;;
++  Darwin* )
++    darwin=true
++    ;;
++  MINGW* )
++    msys=true
++    ;;
++esac
++
++# Attempt to set APP_HOME
++# Resolve links: $0 may be a link
++PRG="$0"
++# Need this for relative symlinks.
++while [ -h "$PRG" ] ; do
++    ls=`ls -ld "$PRG"`
++    link=`expr "$ls" : '.*-> \(.*\)$'`
++    if expr "$link" : '/.*' > /dev/null; then
++        PRG="$link"
++    else
++        PRG=`dirname "$PRG"`"/$link"
++    fi
++done
++SAVED="`pwd`"
++cd "`dirname \"$PRG\"`/" >/dev/null
++APP_HOME="`pwd -P`"
++cd "$SAVED" >/dev/null
++
++CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
++
++# Determine the Java command to use to start the JVM.
++if [ -n "$JAVA_HOME" ] ; then
++    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
++        # IBM's JDK on AIX uses strange locations for the executables
++        JAVACMD="$JAVA_HOME/jre/sh/java"
++    else
++        JAVACMD="$JAVA_HOME/bin/java"
++    fi
++    if [ ! -x "$JAVACMD" ] ; then
++        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
++
++Please set the JAVA_HOME variable in your environment to match the
++location of your Java installation."
++    fi
++else
++    JAVACMD="java"
++    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++
++Please set the JAVA_HOME variable in your environment to match the
++location of your Java installation."
++fi
++
++# Increase the maximum file descriptors if we can.
++if [ "$cygwin" = "false" -a "$darwin" = "false" ] ; then
++    MAX_FD_LIMIT=`ulimit -H -n`
++    if [ $? -eq 0 ] ; then
++        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
++            MAX_FD="$MAX_FD_LIMIT"
++        fi
++        ulimit -n $MAX_FD
++        if [ $? -ne 0 ] ; then
++            warn "Could not set maximum file descriptor limit: $MAX_FD"
++        fi
++    else
++        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
++    fi
++fi
++
++# For Darwin, add options to specify how the application appears in the dock
++if $darwin; then
++    GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
++fi
++
++# For Cygwin, switch paths to Windows format before running java
++if $cygwin ; then
++    APP_HOME=`cygpath --path --mixed "$APP_HOME"`
++    CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
++    JAVACMD=`cygpath --unix "$JAVACMD"`
++
++    # We build the pattern for arguments to be converted via cygpath
++    ROOTDIRSRAW=`find -L / -maxdepth 1 -mindepth 1 -type d 2>/dev/null`
++    SEP=""
++    for dir in $ROOTDIRSRAW ; do
++        ROOTDIRS="$ROOTDIRS$SEP$dir"
++        SEP="|"
++    done
++    OURCYGPATTERN="(^($ROOTDIRS))"
++    # Add a user-defined pattern to the cygpath arguments
++    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
++        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
++    fi
++    # Now convert the arguments - kludge to limit ourselves to /bin/sh
++    i=0
++    for arg in "$@" ; do
++        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
++        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
++
++        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
++            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
++        else
++            eval `echo args$i`="\"$arg\""
++        fi
++        i=$((i+1))
++    done
++    case $i in
++        (0) set -- ;;
++        (1) set -- "$args0" ;;
++        (2) set -- "$args0" "$args1" ;;
++        (3) set -- "$args0" "$args1" "$args2" ;;
++        (4) set -- "$args0" "$args1" "$args2" "$args3" ;;
++        (5) set -- "$args0" "$args1" "$args2" "$args3" "$args4" ;;
++        (6) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" ;;
++        (7) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" ;;
++        (8) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" ;;
++        (9) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" "$args8" ;;
++    esac
++fi
++
++# Split up the JVM_OPTS And GRADLE_OPTS values into an array, following the shell quoting and substitution rules
++function splitJvmOpts() {
++    JVM_OPTS=("$@")
++}
++eval splitJvmOpts $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS
++JVM_OPTS[${#JVM_OPTS[*]}]="-Dorg.gradle.appname=$APP_BASE_NAME"
++
++exec "$JAVACMD" "${JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+diff --git a/gradlew.bat b/gradlew.bat
+new file mode 100644
+index 0000000..8a0b282
+--- /dev/null
++++ b/gradlew.bat
+@@ -0,0 +1,90 @@
++@if "%DEBUG%" == "" @echo off
++@rem ##########################################################################
++@rem
++@rem  Gradle startup script for Windows
++@rem
++@rem ##########################################################################
++
++@rem Set local scope for the variables with windows NT shell
++if "%OS%"=="Windows_NT" setlocal
++
++@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
++set DEFAULT_JVM_OPTS=
++
++set DIRNAME=%~dp0
++if "%DIRNAME%" == "" set DIRNAME=.
++set APP_BASE_NAME=%~n0
++set APP_HOME=%DIRNAME%
++
++@rem Find java.exe
++if defined JAVA_HOME goto findJavaFromJavaHome
++
++set JAVA_EXE=java.exe
++%JAVA_EXE% -version >NUL 2>&1
++if "%ERRORLEVEL%" == "0" goto init
++
++echo.
++echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++echo.
++echo Please set the JAVA_HOME variable in your environment to match the
++echo location of your Java installation.
++
++goto fail
++
++:findJavaFromJavaHome
++set JAVA_HOME=%JAVA_HOME:"=%
++set JAVA_EXE=%JAVA_HOME%/bin/java.exe
++
++if exist "%JAVA_EXE%" goto init
++
++echo.
++echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
++echo.
++echo Please set the JAVA_HOME variable in your environment to match the
++echo location of your Java installation.
++
++goto fail
++
++:init
++@rem Get command-line arguments, handling Windowz variants
++
++if not "%OS%" == "Windows_NT" goto win9xME_args
++if "%@eval[2+2]" == "4" goto 4NT_args
++
++:win9xME_args
++@rem Slurp the command line arguments.
++set CMD_LINE_ARGS=
++set _SKIP=2
++
++:win9xME_args_slurp
++if "x%~1" == "x" goto execute
++
++set CMD_LINE_ARGS=%*
++goto execute
++
++:4NT_args
++@rem Get arguments from the 4NT Shell from JP Software
++set CMD_LINE_ARGS=%$
++
++:execute
++@rem Setup the command line
++
++set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
++
++@rem Execute Gradle
++"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%
++
++:end
++@rem End local scope for the variables with windows NT shell
++if "%ERRORLEVEL%"=="0" goto mainEnd
++
++:fail
++rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
++rem the _cmd.exe /c_ return code!
++if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
++exit /b 1
++
++:mainEnd
++if "%OS%"=="Windows_NT" endlocal
++
++:omega
+diff --git a/settings.gradle b/settings.gradle
+new file mode 100644
+index 0000000..e7b4def
+--- /dev/null
++++ b/settings.gradle
+@@ -0,0 +1 @@
++include ':app'
+-- 
+1.8.3.msysgit.0
+
