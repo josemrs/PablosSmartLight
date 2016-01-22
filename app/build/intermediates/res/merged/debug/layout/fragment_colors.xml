@@ -1,0 +1,153 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="layout.ColorsFragment"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Color"
+        android:id="@+id/textView"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:textAlignment="center" />
+
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
+        android:id="@+id/radioGroupColor">
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Red"
+            android:id="@+id/radioButtonRed"
+            android:textColor="#FF0000"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:checked="true" />
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Green"
+            android:id="@+id/radioButtonGreen"
+            android:textColor="#00FF00"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Blue"
+            android:id="@+id/radioButtonBlue"
+            android:textColor="#0000FF"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Effect"
+        android:id="@+id/textView2"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:textAlignment="center"  />
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioGroupEffect">
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Static"
+            android:id="@+id/radioButtonStatic"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:checked="true" />
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Chaser"
+            android:id="@+id/radioButtonChaser"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:checked="false" />
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Random"
+            android:id="@+id/radioButtonRandom"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Speed"
+        android:id="@+id/textView3"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:textAlignment="center"  />
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioGroupSpeed">
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Very Slow"
+            android:id="@+id/radioButtonVerySlow"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:checked="true" />
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Slow"
+            android:id="@+id/radioButtonSlow"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Normal"
+            android:id="@+id/radioButtonNormalSpeed"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Brightness"
+        android:id="@+id/textView4"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:textAlignment="center"  />
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioGroupBrightness">
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Very Low"
+            android:id="@+id/radioButtonVeryLow"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:checked="true" />
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Low"
+            android:id="@+id/radioButtonLow"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Normal"
+            android:id="@+id/radioButtonNormalBrightness"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+    </RadioGroup>
+
+</LinearLayout>
