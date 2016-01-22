@@ -1,0 +1,16 @@
+[Unit]
+Description=Pablo's SmartLight control service
+Wants=LEDControl.service
+After=LEDControl.service
+After=network.target
+
+[Service]
+Environment=GEM_PATH=/root/.gem/ruby/2.2.0/gems/
+ExecStart=/opt/PSLControl.rb
+Execstop=/bin/kill -9 $MAINPID
+KillMode=process
+KillSignal=SIGKILL
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
