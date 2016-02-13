@@ -5,34 +5,22 @@ require 'socket'
 require 'json'
 
 set :bind, '0.0.0.0'
+#set :bind, '192.168.1.0'
 
 $ControlIP = 'localhost'
 $LEDControlPort = 9999
 $SensorsPort = 9998
 
-get '/' do
-	"Pablo's WonderLight Control REST API"
-end
-
-######### LEDs #########
-
-get '/leds' do
-	begin
-		s = TCPSocket.new $ControlIP, $LEDControlPort
-		s.close
-	rescue
-		status 404
-	end
-end
-
-put '/leds/:cmd' do
+helpers do
+  def leds(cmd)
 	begin
 		s = TCPSocket.new $ControlIP, $LEDControlPort
 		
 		begin
 			request.body.rewind
 			payload = JSON.parse request.body.read
-			puts payload
+
+			puts "Raw payload for command #{params['cmd']}: #{payload}"
 			
 			command = params['cmd']
 			if command == "off"
@@ -51,6 +39,8 @@ put '/leds/:cmd' do
 			brightness = payload['brightness']
 			delay = payload['delay']
 			s.puts "#{command},#{rgb},#{brightness},#{delay}\n"
+
+			puts "Processed request:\n\tCommand: #{command}\n\tRGB: #{rgb}\n\tBrightness: #{brightness}\n\tDelay: #{delay}\n"
 		rescue
 			puts "Exception parsing command"
 		end
@@ -60,6 +50,31 @@ put '/leds/:cmd' do
 		puts "Exception connection to LEDControl"
 		status 404
 	end
+  end
+end
+
+get '/' do
+	File.read(File.join('/opt/public', 'index.html'))
+#	"Pablo's WonderLight Control REST API"
+end
+
+######### LEDs #########
+
+get '/leds' do
+	begin
+		s = TCPSocket.new $ControlIP, $LEDControlPort
+		s.close
+	rescue
+		status 404
+	end
+end
+
+post '/leds/:cmd' do
+	leds(params['cmd'])
+end
+
+put '/leds/:cmd' do
+	leds(params['cmd'])
 end
 
 ######### SENSORS #########

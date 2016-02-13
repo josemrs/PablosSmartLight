@@ -1,0 +1,107 @@
+<html style="background: url(bg.jpg)">
+<head>
+
+<style type="text/css">
+.ui-page {
+	background-image:url(bg.jpg);
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-attachment: fixed;
+	 -webkit-background-size: cover;
+	 -moz-background-size: cover;
+	 -o-background-size: cover;
+	background-size: cover;
+}
+</style>
+
+<link rel="icon" 
+      type="image/png" 
+      href="icon.png" />
+
+<title>Pablo's SmartLight</title>
+
+<!-- Include meta tag to ensure proper rendering and touch zooming -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Include jQuery Mobile stylesheets -->
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+
+<!-- Include the jQuery library -->
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<!-- Include the jQuery Mobile library -->
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+<script type="text/javascript">
+function PostTo(url, data) {
+        $.ajax({
+            type        : 'POST',
+            url         : url,
+            contentType : 'application/json; charset=utf-8',
+            data        : JSON.stringify(data),
+            dataType    : 'json',
+            encode      : true
+        })
+}
+
+
+function TurnOff() {
+        var data = {
+            'RGB'        : '000000',
+            'delay'      : '0',
+            'brightness' : '0'
+        };
+	PostTo('/leds/off', data)
+};
+
+function Random() {
+        var data = {
+            'RGB'        : '000000',
+            'delay'      : '500',
+            'brightness' : '10'
+        };
+	PostTo('/leds/random', data)
+};
+
+function Chaser() {
+        var data = {
+            'RGB'        : '000000',
+            'delay'      : '25',
+            'brightness' : '20'
+        };
+	PostTo('/leds/chaser', data)
+};
+
+function TurnOnBlue() {
+        var data = {
+            'RGB'        : '0008B1',
+            'delay'      : '5',
+            'brightness' : '20'
+        };
+	PostTo('/leds/color', data)
+};
+
+function TurnOnWhite() {
+        var data = {
+            'RGB'        : 'FFC58F',
+            'delay'      : '5',
+            'brightness' : '30'
+        };
+	PostTo('/leds/color', data)
+};
+</script>
+
+</head>
+
+<body>
+
+<button class="ui-btn ui-corner-all ui-shadow" id='onButton' onclick=TurnOnWhite()>ON - Warm White</button>
+<button class="ui-btn ui-corner-all ui-shadow" id='onButton' onclick=TurnOnBlue()>ON - Sea Blue</button>
+<button class="ui-btn ui-corner-all ui-shadow" id='randomButton' onclick=Random()>Random</button>
+<button class="ui-btn ui-corner-all ui-shadow" id='chaserButton' onclick=Chaser()>Chaser</button>
+<button class="ui-btn ui-corner-all ui-shadow" id='offButton' onclick=TurnOff()>OFF</button>
+
+</body>
+
+</html>
+

@@ -22,9 +22,9 @@ LED_INVERT     = False   # True to invert the signal (when using NPN transistor 
 HOST = "0.0.0.0"
 PORT = 9999
 INIT_SHOW_DELAY = 1
-INIT_SHOW_BRIGHTNESS = 25
-EXIT_SHOW_BRIGHTNESS = 3
-CHASER_LENGTH = 20
+INIT_SHOW_BRIGHTNESS = 15
+EXIT_SHOW_BRIGHTNESS = 2
+CHASER_LENGTH = 25
 CHASER_DELAY = 50
 RANGE_BRIGHTNESS = 25
 MAX_DELAY = 2000
@@ -167,7 +167,6 @@ class ControlCommandProcessor(threading.Thread):
 					if controlTuple[Position.COMMAND] == Command.OFF:
 						print "OFF"
 						brightness = 0
-						print "Off"
 						command = Command.OFF
 					
 					elif controlTuple[Position.COMMAND] == Command.COLOR:
@@ -315,10 +314,11 @@ if __name__ == "__main__":
 		commandProcessor.start()
 
 		while keepRunning:
+
 			oldCommand = command
 
 			if command == Command.OFF:
-				showColor(0x0, 0, delay)
+				showColor(0x0, 0, 0)
 				time.sleep(1)
 			if command == Command.COLOR:
 				showColor(color, brightness, delay)
@@ -341,7 +341,7 @@ if __name__ == "__main__":
 
 			if oldCommand != command:
 				showColor(Colors.BLACK, 0, 0)
-			
+
     	except KeyboardInterrupt:
 			keepRunning = False
 
