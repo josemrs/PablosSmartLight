@@ -1,6 +1,6 @@
 <html style="background: url(bg.jpg)">
 <head>
-
+<meta name="theme-color" content="#20466A">
 <style type="text/css">
 .ui-page {
 	background-image:url(bg.jpg);
@@ -33,6 +33,22 @@
 <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
 <script type="text/javascript">
+
+function GetSensorsData() {
+	$.get(
+		'/sensors',
+		function( data ) {
+			$( ".result" ).html( data );
+			var sensorsInfo = '';
+			sensorsInfo += 'Temp: ' + data['temperature']/10 + 'C\n';
+			sensorsInfo += 'Humidity: ' + data['humidity']/10 + '%\n';
+			sensorsInfo += 'Pressure: ' + data['pressure']/10 + ' hPa';
+			alert( sensorsInfo );
+		}
+	);
+
+}
+
 function PostTo(url, data) {
         $.ajax({
             type        : 'POST',
@@ -100,6 +116,7 @@ function TurnOnWhite() {
 <button class="ui-btn ui-corner-all ui-shadow" id='randomButton' onclick=Random()>Random</button>
 <button class="ui-btn ui-corner-all ui-shadow" id='chaserButton' onclick=Chaser()>Chaser</button>
 <button class="ui-btn ui-corner-all ui-shadow" id='offButton' onclick=TurnOff()>OFF</button>
+<button class="ui-btn ui-corner-all ui-shadow" id='sensorsButton' onclick=GetSensorsData()>Sensors</button>
 
 </body>
 
