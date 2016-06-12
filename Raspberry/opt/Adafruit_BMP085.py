@@ -122,7 +122,7 @@ class BMP085 :
     return raw
 
   def readTemperature(self):
-    "Gets the compensated temperature in degrees celcius"
+    "Gets the compensated temperature in degrees celsius"
     UT = 0
     X1 = 0
     X2 = 0
