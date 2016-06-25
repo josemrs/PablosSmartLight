@@ -80,7 +80,7 @@ color = Color(0,0,0)
 brightness = 0
 delay = 10
 
-# Thread to handler the commands comming from the network and queue them for processing.
+# Thread to handler the commands coming from the network and queue them for processing.
 class ControlSocketHandler(SocketServer.BaseRequestHandler):
 
 	def handle(self):
